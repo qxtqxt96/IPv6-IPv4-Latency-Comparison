@@ -123,44 +123,6 @@ def initial_data(ip_folder_path, data_json_file_path):
         json.dump(IP_ONLY_IPV4, f, indent=4)
 
 
-# nonono 这样接收到的不对
-def delay_by_socket_test(ip):
-
-    http_request = "GET / HTTP/1.1\r\nHost: " + ip + "\r\n\r\n"
-    if "." in ip:
-        # ipv4 address
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    elif ":" in ip:
-        # ipv6 address
-        s = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
-
-    # imporve effiency
-    s.settimeout(10)
-    try:
-        s.connect((ip, 80))
-    except:
-        print("Error: Could not connect to URI given: " + ip)
-        return None
-
-
-    delays = []
-    for i in range(iteration):
-        try:
-            start_time = time.time()
-            s.send(http_request.encode())
-            resp = s.recv(4096).decode()
-            end_time = time.time()
-        except:
-            print("Error: Could not to send request or receivem msg")
-        
-        delay = (end_time - start_time) * 1000
-        # print(delay)
-        delays.append(round(delay, 3))
-    
-    s.close()
-    return delays
-
-
 
 # basicly check each ip
 def delay_by_socket(ip):
@@ -300,6 +262,8 @@ def compute_avg(all_ip, sub):
     if length == 0:
         return 0
     return round(avg_delay/length, 3)
+
+    
 def compute_avg_delay(FILEPATH):
 
     with open(FILEPATH, 'r') as f:
